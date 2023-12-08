@@ -5,6 +5,17 @@ const weaponBoard = `
   <div class="weaponBx" id="weapon-1"></div>
   <div class="weaponBx" id="weapon-2"></div>
 `;
+
+const ENEMY = {
+  name: 'Orc',
+  weaponList: [],
+  activeWeapon: '',
+  logo: '<img src="images/orc.png"/>',
+  color: '#736550',
+  enemyData: [],
+  firstMove: false,
+};
+
 const playingBoard = `
   <div class="board" id="board">
     <div class="hero" id="logo"></div>
@@ -19,14 +30,15 @@ const playingBoard = `
       <div class="gameBx" id="8"></div>
       <div class="gameBx" id="9"></div>
     </div>  
-    <div class="hero"><img src="images/orc.png"/></div>
+    <div class="hero">${ENEMY.logo}</div>
   </div>
 `;
 const resetButton = '<button class="reset" onclick="location.reload();">Return</button>';
 let activeHero;
 const title = document.querySelector('#description');
 // const data = [];
-const checkWin = [
+const emptyCells = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const winList = [
   ['1', '2', '3'],
   ['4', '5', '6'],
   ['7', '8', '9'],
@@ -48,7 +60,7 @@ const WIZARD = {
   activeWeapon: '',
   info: 'A master of magic, wielding the forces of the elements',
   logo: '<img src="images/wizard-logo.png"/>',
-  color: '#8521FF',
+  color: '#9252DF',
   data: [],
   active: false,
   firstMove: false,
@@ -74,7 +86,7 @@ const ARCHER = {
   activeWeapon: '',
   info: 'Quick and precise, she never misses a shot',
   logo: '<img src="images/archer-logo.png"/>',
-  color: '#AD4A9D',
+  color: '#3078E4',
   data: [],
   active: false,
   firstMove: false,
@@ -87,7 +99,7 @@ const ASSASSIN = {
   activeWeapon: '',
   info: 'A silent killer, disappearing into the shadows',
   logo: '<img src="images/assassin-logo.png"/>',
-  color: '#A4FF06',
+  color: '#6FFC50',
   data: [],
   active: false,
   firstMove: false,
@@ -106,11 +118,49 @@ let cells = [];
 
 function checkForWin() {
   const { data } = activeHero;
-  for (let i = 0; i < checkWin.length; i += 1) {
-    if (checkWin[i].every((num) => data.includes(num))) {
+  const { enemyData } = ENEMY;
+  let isGameOver = false;
+
+  for (let i = 0; i < winList.length; i += 1) {
+    if (winList[i].every((num) => data.includes(num))) {
       alert(`${activeHero.name} Won!`);
+      isGameOver = true;
+      break;
+    } else if (winList[i].every((num) => enemyData.includes(num))) {
+      alert(`${ENEMY.name} Won!`);
+      isGameOver = true;
+      break;
     }
   }
+
+  if (!isGameOver && emptyCells.length === 0) {
+    alert('Game draw');
+  }
+}
+
+function emptyCellsCounter(cell) {
+  const index = emptyCells.indexOf(cell);
+  if (index !== -1) {
+    emptyCells.splice(index, 1);
+  }
+}
+
+function enemyStep() {
+  const randomIndex = Math.floor(Math.random() * emptyCells.length);
+  const cellId = emptyCells[randomIndex];
+  emptyCellsCounter(cellId);
+
+  const cellElement = document.getElementById(cellId);
+
+  cellElement.innerHTML = activeHero.activeWeapon;
+  const { color } = ENEMY;
+  cellElement.style.transition = '1s';
+  cellElement.style.background = color;
+  cellElement.style.boxShadow = `0 0 24px 2px ${color}`;
+
+  // Добавьте cellId в данные компьютера
+  ENEMY.enemyData.push(cellId);
+  checkForWin();
 }
 
 function updateContent() {
@@ -122,8 +172,12 @@ function updateContent() {
       if (!partition.innerHTML) {
         partition.innerHTML = activeHero.activeWeapon;
         const { color } = activeHero;
+        partition.style.transition = '1s';
+        partition.style.background = color;
         partition.style.boxShadow = `0 0 24px 2px ${color}`;
+        emptyCellsCounter(partition.getAttribute('id'));
         activeHero.data.push(partition.getAttribute('id'));
+        setTimeout(enemyStep, 2000);
         checkForWin();
       }
     });
@@ -139,20 +193,26 @@ function handleWeaponBox() {
   updateContent();
 }
 
+function processText(text) {
+  let result = '';
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === ' ') {
+      result += '<span>&nbsp;</span>';
+    } else {
+      result += `<span style="transition-delay:${i + 1}s">${text[i]}</span>`;
+    }
+  }
+  return result;
+}
+
 HERO_LIST.forEach((hero) => {
   hero.card.addEventListener('mouseover', () => {
-    title.style.opacity = '0';
-    setTimeout(() => {
-      title.textContent = hero.info;
-      title.style.opacity = '1';
-    }, 500);
+    title.innerHTML = processText(hero.info);
+    // title.style.opacity = '1';
   });
   hero.card.addEventListener('mouseout', () => {
-    title.style.opacity = '0';
-    setTimeout(() => {
-      title.textContent = 'Choose your hero';
-      title.style.opacity = '1';
-    }, 500);
+    title.innerHTML = processText('Choose your hero');
+    // title.style.opacity = '1';
   });
 
   hero.card.addEventListener('click', () => {
