@@ -8,10 +8,10 @@ const weaponBoard = `
 
 const ENEMY = {
   name: 'Orc',
-  weaponList: [],
-  activeWeapon: '',
+  weaponList: ['<img src="images/orcs-x.png"/>', '<img src="images/orcs-o.png"/>'],
+  activeWeapon: '<img src="images/orcs-x.png"/>',
   logo: '<img src="images/orc.png"/>',
-  color: '#736550',
+  color: '#47403E99',
   enemyData: [],
   firstMove: false,
 };
@@ -116,6 +116,26 @@ title.style.transition = 'opacity 1s';
 
 let cells = [];
 
+function processText(text) {
+  let result = '';
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] === ' ') {
+      result += '<span>&nbsp;</span>';
+    } else {
+      result += `<span>${text[i]}</span>`;
+    }
+  }
+  return result;
+}
+
+function createMessage(name) {
+  const message = '<div class="message"></div>';
+  content.innerHTML = message;
+  const textHolder = document.querySelector('.message');
+  const text = `${name} Winner!`;
+  textHolder.innerHTML = processText(text);
+}
+
 function checkForWin() {
   const { data } = activeHero;
   const { enemyData } = ENEMY;
@@ -123,18 +143,18 @@ function checkForWin() {
 
   for (let i = 0; i < winList.length; i += 1) {
     if (winList[i].every((num) => data.includes(num))) {
-      alert(`${activeHero.name} Won!`);
+      setTimeout(createMessage(activeHero.name), 1000);
       isGameOver = true;
       break;
     } else if (winList[i].every((num) => enemyData.includes(num))) {
-      alert(`${ENEMY.name} Won!`);
+      setTimeout(createMessage(ENEMY.name), 1000);
       isGameOver = true;
       break;
     }
   }
 
   if (!isGameOver && emptyCells.length === 0) {
-    alert('Game draw');
+    setTimeout(createMessage('Nobody'), 1000);
   }
 }
 
@@ -152,7 +172,7 @@ function enemyStep() {
 
   const cellElement = document.getElementById(cellId);
 
-  cellElement.innerHTML = activeHero.activeWeapon;
+  cellElement.innerHTML = ENEMY.activeWeapon;
   const { color } = ENEMY;
   cellElement.style.transition = '1s';
   cellElement.style.background = color;
@@ -173,7 +193,7 @@ function updateContent() {
         partition.innerHTML = activeHero.activeWeapon;
         const { color } = activeHero;
         partition.style.transition = '1s';
-        partition.style.background = color;
+        partition.style.background = `${color}99`;
         partition.style.boxShadow = `0 0 24px 2px ${color}`;
         emptyCellsCounter(partition.getAttribute('id'));
         activeHero.data.push(partition.getAttribute('id'));
@@ -193,26 +213,12 @@ function handleWeaponBox() {
   updateContent();
 }
 
-function processText(text) {
-  let result = '';
-  for (let i = 0; i < text.length; i += 1) {
-    if (text[i] === ' ') {
-      result += '<span>&nbsp;</span>';
-    } else {
-      result += `<span style="transition-delay:${i + 1}s">${text[i]}</span>`;
-    }
-  }
-  return result;
-}
-
 HERO_LIST.forEach((hero) => {
   hero.card.addEventListener('mouseover', () => {
     title.innerHTML = processText(hero.info);
-    // title.style.opacity = '1';
   });
   hero.card.addEventListener('mouseout', () => {
     title.innerHTML = processText('Choose your hero');
-    // title.style.opacity = '1';
   });
 
   hero.card.addEventListener('click', () => {
