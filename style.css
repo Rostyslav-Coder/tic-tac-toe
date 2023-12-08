@@ -24,14 +24,37 @@ body>h1 {
   color: #111;
   text-shadow: 0 0 12px #FFF;
   letter-spacing: 0.3rem;
+  cursor: default;
 }
 
 body>h2 {
   font-size: 2rem;
   color: #111;
   text-shadow: 0 0 12px #FFF;
+  text-transform: uppercase;
+  text-align: center;
+  display: flex;
   letter-spacing: 0.15rem;
-  transition: 1s;
+  transition: 60s;
+  cursor: default;
+}
+
+@keyframes textAnimation {
+  0% {
+    filter: blur(8px);
+    opacity: 0;
+    transform: scale(2.2);
+  }
+
+  100% {
+    filter: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+body>h2>span {
+  animation: textAnimation 3s;
 }
 
 .container {
@@ -61,10 +84,9 @@ body>h2 {
 }
 
 .container .card:hover .imgBx {
-  box-shadow: none;
+  box-shadow: 0 0 18px 1px var(--clr);
   transition: 0.7s;
 }
-
 
 .container .card .imgBx img {
   position: absolute;
@@ -94,7 +116,7 @@ body>h2 {
 
 .container .card:hover .c3d {
   opacity: 1;
-  transform: translateY(-15%) scale(1.5);
+  transform: translateY(-15%) scale(1.4);
   transition: 0.7s;
 }
 
@@ -161,7 +183,6 @@ body>h2 {
 }
 
 .container>.board>.game>.gameBx {
-  /* position: relative; */
   width: 110px;
   height: 110px;
   background: #00000055;
@@ -175,13 +196,30 @@ body>h2 {
   cursor: pointer;
 }
 
+.container>.board>.game>.gameBx:active {
+  border-top: 3px solid #444;
+  border-left: 3px solid #444;
+  box-shadow: none;
+}
+
+@keyframes moveAnimation {
+  0% {
+    transform: scale(0.01) rotate(720deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 .container>.board>.game>.gameBx>img {
   width: 100%;
   height: 100%;
+  animation: moveAnimation 1s;
 }
 
 .container>.board>.hero {
-  box-shadow: 0 0 24px 2px #FFF;
+  box-shadow: 0 0 24px 2px #736550;
   background-color: #22222255;
   border-radius: 20px;
   width: 250px;
