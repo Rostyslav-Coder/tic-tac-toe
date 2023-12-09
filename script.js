@@ -191,7 +191,7 @@ function updateContent() {
 
   cells.forEach((cell) => {
     if (ENEMY.firstMove) {
-      setTimeout(enemyStep, 2000);
+      setTimeout(enemyStep, 300);
       ENEMY.firstMove = false;
     }
     cell.addEventListener('click', () => {
