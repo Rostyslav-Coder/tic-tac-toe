@@ -1,57 +1,16 @@
 // Tic Tac Toe Game
 
 const content = document.querySelector('#container');
-const weaponBoard = `
-  <div class="weaponBx" id="weapon-1"></div>
-  <div class="weaponBx" id="weapon-2"></div>
-`;
 
 const ENEMY = {
   name: 'Orc',
   weaponList: ['<img src="images/orcs-x.png"/>', '<img src="images/orcs-o.png"/>'],
-  activeWeapon: '<img src="images/orcs-x.png"/>',
+  activeWeapon: '',
   logo: '<img src="images/orc.png"/>',
   color: '#47403E99',
   enemyData: [],
   firstMove: false,
 };
-
-const playingBoard = `
-  <div class="board" id="board">
-    <div class="hero" id="logo"></div>
-    <div class="game">
-      <div class="gameBx" id="1"></div>
-      <div class="gameBx" id="2"></div>
-      <div class="gameBx" id="3"></div>
-      <div class="gameBx" id="4"></div>
-      <div class="gameBx" id="5"></div>
-      <div class="gameBx" id="6"></div>
-      <div class="gameBx" id="7"></div>
-      <div class="gameBx" id="8"></div>
-      <div class="gameBx" id="9"></div>
-    </div>  
-    <div class="hero">${ENEMY.logo}</div>
-  </div>
-`;
-const resetButton = '<button class="reset" onclick="location.reload();">Return</button>';
-let activeHero;
-const title = document.querySelector('#description');
-// const data = [];
-const emptyCells = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const winList = [
-  ['1', '2', '3'],
-  ['4', '5', '6'],
-  ['7', '8', '9'],
-  ['1', '4', '7'],
-  ['2', '5', '8'],
-  ['3', '6', '9'],
-  ['1', '5', '9'],
-  ['3', '5', '7'],
-];
-
-let weaponBox1;
-let weaponBox2;
-let heroLogo;
 
 const WIZARD = {
   card: document.querySelector('#wizard-card'),
@@ -112,17 +71,62 @@ const HERO_LIST = [
   ASSASSIN,
 ];
 
-title.style.transition = 'opacity 1s';
+let activeHero;
 
+const weaponBoard = `
+  <div class="weaponBx" id="weapon-1"></div>
+  <div class="weaponBx" id="weapon-2"></div>
+`;
+
+const playingBoard = `
+  <div class="board" id="board">
+    <div class="hero" id="logo"></div>
+    <div class="game">
+      <div class="gameBx" id="1"></div>
+      <div class="gameBx" id="2"></div>
+      <div class="gameBx" id="3"></div>
+      <div class="gameBx" id="4"></div>
+      <div class="gameBx" id="5"></div>
+      <div class="gameBx" id="6"></div>
+      <div class="gameBx" id="7"></div>
+      <div class="gameBx" id="8"></div>
+      <div class="gameBx" id="9"></div>
+    </div>  
+    <div class="hero">${ENEMY.logo}</div>
+  </div>
+`;
+
+const resetButton = '<button class="reset" onclick="location.reload();">Return</button>';
+
+const title = document.querySelector('#description');
+
+const emptyCells = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+const winList = [
+  ['1', '2', '3'],
+  ['4', '5', '6'],
+  ['7', '8', '9'],
+  ['1', '4', '7'],
+  ['2', '5', '8'],
+  ['3', '6', '9'],
+  ['1', '5', '9'],
+  ['3', '5', '7'],
+];
+
+let weaponBox1;
+let weaponBox2;
+let heroLogo;
 let cells = [];
+
+title.style.transition = 'opacity 1s';
 
 function processText(text) {
   let result = '';
   for (let i = 0; i < text.length; i += 1) {
     if (text[i] === ' ') {
-      result += '<span>&nbsp;</span>';
+      result += `<span style="transition-delay:${i}s">&nbsp;</span>`;
     } else {
-      result += `<span>${text[i]}</span>`;
+      result += `<span style="transition-delay:${i}s">${text[i]}</span>`;
     }
   }
   return result;
@@ -143,18 +147,18 @@ function checkForWin() {
 
   for (let i = 0; i < winList.length; i += 1) {
     if (winList[i].every((num) => data.includes(num))) {
-      setTimeout(createMessage(activeHero.name), 1000);
+      createMessage(activeHero.name);
       isGameOver = true;
       break;
     } else if (winList[i].every((num) => enemyData.includes(num))) {
-      setTimeout(createMessage(ENEMY.name), 1000);
+      createMessage(ENEMY.name);
       isGameOver = true;
       break;
     }
   }
 
   if (!isGameOver && emptyCells.length === 0) {
-    setTimeout(createMessage('Nobody'), 1000);
+    createMessage('Nobody');
   }
 }
 
@@ -178,7 +182,6 @@ function enemyStep() {
   cellElement.style.background = color;
   cellElement.style.boxShadow = `0 0 24px 2px ${color}`;
 
-  // Добавьте cellId в данные компьютера
   ENEMY.enemyData.push(cellId);
   checkForWin();
 }
@@ -187,6 +190,10 @@ function updateContent() {
   cells = document.querySelectorAll('.gameBx');
 
   cells.forEach((cell) => {
+    if (ENEMY.firstMove) {
+      setTimeout(enemyStep, 2000);
+      ENEMY.firstMove = false;
+    }
     cell.addEventListener('click', () => {
       const partition = cell;
       if (!partition.innerHTML) {
@@ -237,12 +244,17 @@ HERO_LIST.forEach((hero) => {
     weaponBox1.addEventListener('click', () => {
       activeHero.activeWeapon = weapon1;
       activeHero.firstMove = true;
+      const enemyWeapon = ENEMY.weaponList[1];
+      ENEMY.activeWeapon = enemyWeapon;
       handleWeaponBox();
     });
 
     weaponBox2.addEventListener('click', () => {
       activeHero.activeWeapon = weapon2;
       activeHero.firstMove = false;
+      const enemyWeapon = ENEMY.weaponList[0];
+      ENEMY.activeWeapon = enemyWeapon;
+      ENEMY.firstMove = true;
       handleWeaponBox();
     });
   });
