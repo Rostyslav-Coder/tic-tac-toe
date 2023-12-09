@@ -159,7 +159,8 @@ body>h2>span {
   transition: 0.7s;
 }
 
-.card h2 {
+.card h2,
+.container .weaponBx>h2 {
   position: absolute;
   bottom: 42px;
   left: 70%;
@@ -177,7 +178,8 @@ body>h2>span {
   opacity: 0;
 }
 
-.card:hover h2 {
+.card:hover h2,
+.container .weaponBx:hover>h2 {
   bottom: -32px;
   left: 30%;
   opacity: 1;
@@ -186,24 +188,38 @@ body>h2>span {
 
 /* Weapon Page */
 .container .weaponBx {
+  position: relative;
   width: 420px;
   height: 310px;
-  background: var(--background-color);
   border-radius: 20px;
-  box-shadow: 0 0 42px 2px var(--clr);
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: 0.5s;
   cursor: pointer;
 }
 
-.container .weaponBx>img {
+.container .weaponBx:hover {
+  background-color: var(--background-color) !important;
+  box-shadow: 0 0 60px 5px var(--clr) !important;
   transition: 0.5s;
 }
 
-.container .weaponBx>img:hover {
-  transform: scale(1.2);
+.container .weaponBx>img {
+  height: 80%;
+  transition: 0.5s;
+}
+
+.container .weaponBx:hover>img {
+  transform: scale(1.5);
+  transition: 0.5s;
+}
+
+.container .weaponBx>h2 {
+  background-color: var(--font-color);
+  font-size: 1.3rem;
+  color: var(--shadow-color);
   transition: 0.5s;
 }
 
@@ -259,7 +275,6 @@ body>h2>span {
   font-size: 4rem;
   color: var(--font-color);
   text-shadow: 0 0 36px var(--shadow-color);
-  text-transform: uppercase;
   text-align: center;
   display: flex;
   letter-spacing: 0.4rem;
