@@ -117,6 +117,8 @@ let weaponBox1;
 let weaponBox2;
 let heroLogo;
 let cells = [];
+const weponBoxText1 = '<h2>This is "X" and first step</h2>';
+const weponBoxText2 = '<h2>This is "O" and second step</h2>';
 
 title.style.transition = 'opacity 1s';
 
@@ -236,8 +238,10 @@ HERO_LIST.forEach((hero) => {
     weaponBox1 = document.querySelector('#weapon-1');
     weaponBox2 = document.querySelector('#weapon-2');
     const [weapon1, weapon2] = activeHero.weaponList;
-    weaponBox1.innerHTML = weapon1;
-    weaponBox2.innerHTML = weapon2;
+    weaponBox1.innerHTML = weapon1 + weponBoxText1;
+    weaponBox2.innerHTML = weapon2 + weponBoxText2;
+    weaponBox1.style.backgroundColor = activeHero.color;
+    weaponBox2.style.backgroundColor = activeHero.color;
     weaponBox1.style.boxShadow = `0 0 42px 2px ${activeHero.color}`;
     weaponBox2.style.boxShadow = `0 0 42px 2px ${activeHero.color}`;
 
